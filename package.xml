@@ -1,0 +1,17 @@
+<package>
+  <name>convertmsg_rgbdobj_qi</name>
+  <version>0.0.0</version>
+  <description>Wrapper: rgb_d_object_ext ROS messages to NAOqi events</description>
+  <maintainer email="natalia.lyubova@gmail.com">Natalia Lyubova</maintainer>
+  <license>BSD</license>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>visualization_msgs</run_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

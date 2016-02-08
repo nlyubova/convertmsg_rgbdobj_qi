@@ -1,0 +1,24 @@
+<launch>
+
+  <arg name="nao_ip" default="$(optenv NAO_IP)" />
+  <arg name="nao_port" default="9559" />
+  <arg name="pc_ip" default="10.0.164.125" />
+  <arg name="pc_port" default="9559" />
+
+  <arg name="topic_obj_names" default="/rgb_d_object_ext/objects_names" />
+  <arg name="topic_obj_boxes" default="/rgb_d_object_ext/objects_bounding_boxes" />
+
+  <!-- Use CPP node by default for naoqi_sensors -->
+  <arg name="force_python" default="false" />
+
+  <node pkg="convertmsg_rgbdobj_qi" type="convertmsg_rgbdobj_qi" name="convertmsg_rgbdobj_qi" args=" --pip=$(arg nao_ip) --pport=$(arg nao_port) --ip=$(arg pc_ip) --port=$(arg pc_port)" output="screen">
+   <param name="nao_ip" value="$(arg nao_ip)" />
+   <param name="pc_ip" value="$(arg pc_ip)" />
+   <param name="nao_port" value="$(arg nao_port)" />
+   <param name="pc_port" value="$(arg pc_port)" />
+
+   <param name="topic_obj_names" value="$(arg topic_obj_names)" />
+   <param name="topic_obj_boxes" value="$(arg topic_obj_boxes)" />
+  </node>
+
+</launch>
