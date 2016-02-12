@@ -5,7 +5,6 @@
 #include <sstream>
 
 #include <alvalue/alvalue.h>
-//#include <alt>
 #include <qi/log.hpp>
 
 //! @brief Define Log category
@@ -49,21 +48,14 @@ Msgrostonaoqi::~Msgrostonaoqi()
   try
   {
     pTabletProxy->callVoid("showImage", "http://198.18.0.1/tmp/temp.jpg");
-    //pTabletProxy->callVoid("unsubscribe");
   }
   catch (const AL::ALError& e) {
     qiLogError() << e.what();
   }
 }
 
-void Msgrostonaoqi::init()//int argc, char ** argv)
+void Msgrostonaoqi::init()
 {
-  //initialize ros node parameters
-  /*for (std::vector::iterator<std::string> it=events_names_.begin(); it!=events_names_.ends(); ++it)
-      nh_.param(*it,topic_obj,std::string("/recognized_object_array"));
-  nh_.param("table_topic",topic_table,std::string("/table_array"));
-  //ROS_INFO_STREAM("-- listen to the topics " << topic_obj);*/
-
   //initialize the NAOqi proxies and events
   if (!connectNaoQi() || !connectProxy())
     ROS_ERROR("Could not connect to NAO proxy");
@@ -78,21 +70,6 @@ void Msgrostonaoqi::init()//int argc, char ** argv)
     pMemoryProxy = boost::shared_ptr<AL::ALMemoryProxy>(new AL::ALMemoryProxy(m_broker));
 
     ROS_INFO_STREAM("notifying the following Naoqi events: ");
-    /*ros::master::V_TopicInfo master_topics;
-    ros::master::getTopics(master_topics);
-    for (ros::master::V_TopicInfo::iterator it = master_topics.begin() ; it != master_topics.end(); it++) {
-      std::string topic = it->name;
-      if(strstr(topic, topics_ns_) == NULL)
-        continue;
-
-      topics_names_.push_back(topic);
-      events_names_.push_back(topic);
-      pMemoryProxy->declareEvent(topic);
-      ROS_INFO_STREAM("--" << topic);
-
-      const ros::master::TopicInfo& info = *it;
-      for (std::vector::iterator<std::string> it=events_names_.begin(); it!=events_names_.ends(); ++it)
-  //}*/
 
     pMemoryProxy->declareEvent(topic_obj_names_);
     ROS_INFO_STREAM("  " << topic_obj_names_);
@@ -101,16 +78,10 @@ void Msgrostonaoqi::init()//int argc, char ** argv)
 
     //initialize the ros subscriber
     sub_names_ = nh_.subscribe<visualization_msgs::MarkerArray>(topic_obj_names_, 10, &Msgrostonaoqi::notify_names, this);
-    sub_boxes_ = nh_.subscribe<visualization_msgs::MarkerArray>(topic_obj_boxes_, 10, &Msgrostonaoqi::notify_boxes, this);
   }
   catch (const AL::ALError& e) {
     qiLogError() << e.what();
   }
-}
-
-void Msgrostonaoqi::notify_boxes(const visualization_msgs::MarkerArray::ConstPtr& msg)
-{
-
 }
 
 void Msgrostonaoqi::notify_names(const visualization_msgs::MarkerArray::ConstPtr& msg)
@@ -135,7 +106,6 @@ void Msgrostonaoqi::notify_names(const visualization_msgs::MarkerArray::ConstPtr
     if (initialized_naoqi)
     {
       AL::ALValue valOutcome;
-      valOutcome.arrayPush(object);
       valOutcome.arrayPush(it_o->text);
       valOutcome.arrayPush(position);
       valOutcome.arrayPush(orientation);
@@ -158,7 +128,6 @@ void Msgrostonaoqi::notify_names(const visualization_msgs::MarkerArray::ConstPtr
 
     ++it_o;
   }
-  //ROS_INFO("I heard: [%s]", msg->data.c_str());
 }
 
 bool Msgrostonaoqi::connectNaoQi()
@@ -172,8 +141,6 @@ bool Msgrostonaoqi::connectNaoQi()
   catch(const AL::ALError& e)
   {
     ROS_ERROR( "Failed to connect broker to: %s:%d", pip_.c_str(), port_);
-    //AL::ALBrokerManager::getInstance()->killAllBroker();
-    //AL::ALBrokerManager::kill();
     return false;
   }
   ROS_INFO("NAOqi broker ready");
