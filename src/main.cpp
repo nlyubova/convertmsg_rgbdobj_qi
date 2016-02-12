@@ -4,9 +4,9 @@
 
 /**
   launch from the command line
-    ./ork/devel/lib/convertmsg_orktonaoqi/./convertmsg_orktonaoqi --pip 10.0.128.63 --pport 9559
+    ./rgbdobj_tonaoqi --pip 10.0.128.63 --pport 9559
   or use the ros.launch file
-    roslaunch convertmsg_orktonaoqi convertmsg_orktonaoqi.launch
+    roslaunch rgbdobj_tonaoqi rgbdobj_tonaoqi.launch
  */
 
 void parse_command_line(int argc, char ** argv, std::string &m_pip, std::string &m_ip, int &m_port, int &m_pport)
@@ -34,10 +34,10 @@ void parse_command_line(int argc, char ** argv, std::string &m_pip, std::string 
   m_pport = vm["pport"].as<int>();
   m_pip = vm["pip"].as<std::string>();
   m_ip = vm["ip"].as<std::string>();
-  ROS_DEBUG_STREAM("pip is " << m_pip);
-  ROS_DEBUG_STREAM("ip is " << m_ip);
-  ROS_DEBUG_STREAM("port is " << m_port);
-  ROS_DEBUG_STREAM("pport is " << m_pport);
+  ROS_INFO_STREAM("pip is " << m_pip);
+  ROS_INFO_STREAM("ip is " << m_ip);
+  ROS_INFO_STREAM("port is " << m_port);
+  ROS_INFO_STREAM("pport is " << m_pport);
 
   if (vm.count("help")) {
     std::cout << desc << "\n";
@@ -47,25 +47,17 @@ void parse_command_line(int argc, char ** argv, std::string &m_pip, std::string 
 
 int main(int argc, char **argv)
 {
-  std::string m_pip = "localhost"; //"nao.local"; //"10.0.163.217"; //
+  std::string m_pip = ""; //"nao.local"; //"10.0.163.217"; //
   std::string m_ip = "0.0.0.0";
   int m_port = 9559;
   int m_pport = 9559;
   parse_command_line(argc, argv, m_pip, m_ip, m_port, m_pport);
-  //std::cout << "launching with parameters: " << m_pip << " " << m_ip << " " << m_port << " " << m_pport << std::endl;
+  //ROS_INFO_STREAM("launching with parameters: " << m_pip << " " << m_ip << " " << m_port << " " << m_pport);
 
   //initialize the ros node
-  /*std::stringstream strstr;
-  strstr << "__master=http://" << m_pip << ":" << m_pport;
-  //std::cout << " ---------------------- " << strstr.str() << std::endl;
-  char * m_master = &strstr.str()[0];
-  char *argv_l[] = {"convertmsg_orktonaoqi", m_master, NULL};
-  int argc_l = 2;
-  ros::init(argc_l, argv_l, "convertmsg_orktonaoqi");*/
-  ros::init(argc, argv, "convertmsg_orktonaoqi");
+  ros::init(argc, argv, "rgbdobj_tonaoqi");
 
   Msgrostonaoqi wrapper(m_pip, m_ip, m_port, m_pport);
-  //wrapper.init();//argc, argv);
   ros::Rate rate(10);
 
 	while(ros::ok())

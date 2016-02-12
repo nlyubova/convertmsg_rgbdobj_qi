@@ -11,7 +11,7 @@
   <!-- Use CPP node by default for naoqi_sensors -->
   <arg name="force_python" default="false" />
 
-  <node pkg="convertmsg_rgbdobj_qi" type="convertmsg_rgbdobj_qi" name="convertmsg_rgbdobj_qi" args=" --pip=$(arg nao_ip) --pport=$(arg nao_port) --ip=$(arg pc_ip) --port=$(arg pc_port)" output="screen">
+  <node pkg="rgbdobj_tonaoqi" type="rgbdobj_tonaoqi" name="rgbdobj_tonaoqi" args=" --pip=$(arg nao_ip) --pport=$(arg nao_port) --ip=$(arg pc_ip) --port=$(arg pc_port)" output="screen">
    <param name="nao_ip" value="$(arg nao_ip)" />
    <param name="pc_ip" value="$(arg pc_ip)" />
    <param name="nao_port" value="$(arg nao_port)" />

@@ -9,10 +9,10 @@
 #include <qi/log.hpp>
 
 //! @brief Define Log category
-qiLogCategory("convertmsg_rgbdobj_qi");
+qiLogCategory("rgbdobj_tonaoqi");
 
-Msgrostonaoqi::Msgrostonaoqi(std::string pip, std::string ip,
-                             int port, int pport):
+Msgrostonaoqi::Msgrostonaoqi(const std::string &pip, const std::string &ip,
+                             const int &port, const int &pport):
   nh_("~"),
   pip_(pip),
   ip_(ip),
@@ -24,12 +24,15 @@ Msgrostonaoqi::Msgrostonaoqi(std::string pip, std::string ip,
   event_obj_names_(topic_obj_names_),
   event_obj_boxes_(topic_obj_boxes_),
   initialized_naoqi(false),
-  package_name_("convertmsg_rgbdobj_qi")
+  initialized_tablet(false),
+  package_name_("rgbdobj_tonaoqi")
 {
   initialized_naoqi = false;
 
-  nh_.getParam("nao_ip", pip_);
-  nh_.getParam("pc_ip", ip_);
+  if (pip_.empty())
+    nh_.getParam("nao_ip", pip_);
+  if (ip_.empty())
+    nh_.getParam("pc_ip", ip_);
   nh_.getParam("nao_port", pport_);
   nh_.getParam("pc_port", port_);
 
@@ -43,6 +46,14 @@ Msgrostonaoqi::Msgrostonaoqi(std::string pip, std::string ip,
 
 Msgrostonaoqi::~Msgrostonaoqi()
 {
+  try
+  {
+    pTabletProxy->callVoid("showImage", "http://198.18.0.1/tmp/temp.jpg");
+    //pTabletProxy->callVoid("unsubscribe");
+  }
+  catch (const AL::ALError& e) {
+    qiLogError() << e.what();
+  }
 }
 
 void Msgrostonaoqi::init()//int argc, char ** argv)
@@ -58,7 +69,7 @@ void Msgrostonaoqi::init()//int argc, char ** argv)
     ROS_ERROR("Could not connect to NAO proxy");
   else
   {
-    connectTablet();
+    initialized_tablet = connectTablet();
     initialized_naoqi = true;
   }
 
@@ -117,15 +128,33 @@ void Msgrostonaoqi::notify_names(const visualization_msgs::MarkerArray::ConstPtr
     orientation.push_back(it_o->pose.orientation.z);
     orientation.push_back(it_o->pose.orientation.w);
 
-    AL::ALValue valOutcome;
-    valOutcome.arrayPush(it_o->text);
-    valOutcome.arrayPush(position);
-    valOutcome.arrayPush(orientation);
-
-std::cout << "Publishing the Naoqi event " << event_obj_names_ << " : " << valOutcome << std::endl;
+    std::string object("");
+    if (it_o->text.length()>1)
+      object = it_o->text.substr(0, it_o->text.length()-1);
 
     if (initialized_naoqi)
+    {
+      AL::ALValue valOutcome;
+      valOutcome.arrayPush(object);
+      valOutcome.arrayPush(it_o->text);
+      valOutcome.arrayPush(position);
+      valOutcome.arrayPush(orientation);
+
       pMemoryProxy->raiseMicroEvent(event_obj_names_, valOutcome);
+      //std::cout << "Publishing the Naoqi event " << event_obj_names_ << " : " << valOutcome << std::endl;
+    }
+
+    //show an image
+    if (initialized_tablet)
+    try
+    {
+      //ROS_INFO_STREAM("visualize the image: http://198.18.0.1/tmp/"+object+".jpg");
+      pTabletProxy->callVoid("showImage", "http://198.18.0.1/tmp/"+object+".jpg");
+    }
+    catch (const AL::ALError& e)
+    {
+       ROS_ERROR("Cannot execute ALTabletService.showImage");
+    }
 
     ++it_o;
   }
@@ -232,7 +261,7 @@ bool Msgrostonaoqi::connectTablet()
   //connnect to ALTabletService
   try
   {
-    pVRProxy = boost::shared_ptr<AL::ALProxy>(new AL::ALProxy(m_broker,"ALTabletService"));
+    pTabletProxy = boost::shared_ptr<AL::ALProxy>(new AL::ALProxy(m_broker,"ALTabletService"));
   }
   catch (const AL::ALError& e)
   {
@@ -240,15 +269,6 @@ bool Msgrostonaoqi::connectTablet()
     return false;
   }
   ROS_INFO("Proxy to ALTabletService is ready");
-
-  try
-  {
-    pVRProxy->callVoid("showImage", "http://198.18.0.1/img/help_charger.png");
-  }
-  catch (const AL::ALError& e)
-  {
-     ROS_ERROR("Cannot execute ALTabletService.showImage");
-  }
 
   return true;
 }

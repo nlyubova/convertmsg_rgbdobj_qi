@@ -1,5 +1,5 @@
 <package>
-  <name>convertmsg_rgbdobj_qi</name>
+  <name>rgbdobj_tonaoqi</name>
   <version>0.0.0</version>
   <description>Wrapper: rgb_d_object_ext ROS messages to NAOqi events</description>
   <maintainer email="natalia.lyubova@gmail.com">Natalia Lyubova</maintainer>

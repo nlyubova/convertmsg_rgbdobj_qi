@@ -6,7 +6,7 @@
 #include <alcommon/albroker.h>
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/alvisionrecognitionproxy.h>
-#include <qi/session.hpp>
+//#include <qi/session.hpp>
 
 #include <boost/program_options.hpp>
 
@@ -15,7 +15,8 @@
 class Msgrostonaoqi
 {
 public:
-  Msgrostonaoqi(std::string pip, std::string ip, int port, int pport);
+  Msgrostonaoqi(const std::string &pip, const std::string &ip,
+                const int &port, const int &pport);
   virtual ~Msgrostonaoqi();
   void init(); //int argc, char ** argv);
   void parse_command_line(int argc, char ** argv);
@@ -36,7 +37,7 @@ protected:
   std::string brokerName_;
 
   /*std::string topics_ns_;
-  std::vector<std::string> topics_names_;
+  std::edfvector<std::string> topics_names_;
   std::vector<std::string> events_names_;*/
   std::string topic_obj_names_;
   std::string topic_obj_boxes_;
@@ -44,6 +45,7 @@ protected:
   std::string event_obj_boxes_;
 
   bool initialized_naoqi;
+  bool initialized_tablet;
   std::string package_name_;
 
   ros::Subscriber sub_names_, sub_boxes_;
@@ -51,7 +53,7 @@ protected:
   boost::shared_ptr<AL::ALBroker> m_broker;
   boost::shared_ptr<AL::ALMemoryProxy> pMemoryProxy;
 
-  boost::shared_ptr<AL::ALProxy> pVRProxy;
+  boost::shared_ptr<AL::ALProxy> pTabletProxy;
 };
 
 #endif // MSGROSTONAOQI_H
