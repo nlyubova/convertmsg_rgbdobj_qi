@@ -58,6 +58,10 @@ if( ${NAOqi_FOUND} AND ${Boost_FOUND} )
   install(DIRECTORY launch/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
   )
+  # Instructions to install launch files
+  install(DIRECTORY pics/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/pics
+  )
 else()
   message(STATUS "Cannot find NAOqi C++ sdk; C++ nodes will NOT be built")
 endif()
