@@ -74,7 +74,6 @@ set(NAOqi_COMPONENTS
     althread
     alvision
     alproxies
-    altablet
     qi
     qitype
 )
